@@ -14,9 +14,19 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 
-sim = np.load('similarity_matrix.npy')
+#sim = np.load('similarity_matrix.npy')
 df2 = pd.read_csv('data.csv')
 
+def create_sim():
+    
+    # creating a count matrix
+    cv = CountVectorizer(stop_words='english')
+    count_matrix = cv.fit_transform(df2['soup3'])
+    # creating a similarity score matrix
+    sim = cosine_similarity(count_matrix)
+    return sim
+
+sim = create_sim()
 # Reset index of our main DataFrame and construct reverse mapping as before
 df2 = df2.reset_index()
 indices = pd.Series(df2.index, index=df2['original_title'])
@@ -34,7 +44,7 @@ def get_rec2(title, sig=sim):
         df = df2['original_title'].iloc[movie_indices]
         return df.values
 
-# print(get_rec2('Hoola Boola'))
+print(get_rec2('Spectre'))
 
 app = Flask(__name__)
 
